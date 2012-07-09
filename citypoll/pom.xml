@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>omega</artifactId>
+        <groupId>omega</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>citypoll</artifactId>
+    <packaging>war</packaging>
+    <name>citypoll Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+     <build>
+		<finalName>citypoll</finalName>
+		<plugins>
+
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <id>unpackDojo</id>
+			      <phase>generate-sources</phase>
+			      <goals>
+			        <goal>unpack</goal>
+			      </goals>
+			      <configuration>
+			        <artifactItems>
+			          <artifactItem>
+			            <groupId>org.dojotoolkit</groupId>
+			            <artifactId>dojo-war</artifactId>
+			            <version>${dojo.version}</version>
+			            <type>war</type>
+			            <outputDirectory>
+			              ${basedir}/src/main/webapp/js/lib/dojo-release
+			            </outputDirectory>
+			          </artifactItem>
+			        </artifactItems>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<taskdef name="jslint"
+										 classname="com.googlecode.jslint4java.ant.JSLintTask"
+										 classpath="${settings.localRepository}/com/googlecode/jslint4java/jslint4java-ant/1.4.2/jslint4java-ant-1.4.2.jar" />
+								<jslint options="browser">
+									<predef>Backbone,$,_</predef>
+									<formatter type="plain" />
+									<fileset dir="${basedir}/src/main/webapp/">
+										<include name="js/**/*.js" />
+										<exclude name="js/lib/**/*.js" />
+									</fileset>
+								</jslint>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.googlecode.jslint4java</groupId>
+						<artifactId>jslint4java-ant</artifactId>
+						<version>1.4.2</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+
+
+       <plugin>
+        <groupId>com.github.searls</groupId>
+        <artifactId>jasmine-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+        	 <skipTests>${skipTests}</skipTests>
+        	 <jsSrcDir>${basedir}/src/main/webapp/test/</jsSrcDir>
+        	  <jsTestSrcDir>${basedir}/src/main/webapp/test/spec</jsTestSrcDir>
+			 <customRunnerTemplate>${basedir}/src/main/webapp/autoSpecRunner.html</customRunnerTemplate>
+        </configuration>
+      </plugin>
+		</plugins>
+	</build>
+</project>
